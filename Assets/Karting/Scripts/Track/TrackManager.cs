@@ -29,6 +29,10 @@ namespace KartGame.Track
 
         public bool IsRaceRunning => m_IsRaceRunning;
 
+        public GameObject m_gameOverUI;
+        public Animator m_newRecordAnimator;
+        public float m_newRecordDisplayTime;
+
         /// <summary>
         /// Returns the best lap time recorded this session.  If no record is found, -1 is returned.
         /// </summary>
@@ -181,6 +185,13 @@ namespace KartGame.Track
             CheckRacerHitCheckpoint (racer, checkpoint);
         }
 
+        private IEnumerator ShowNewRecord()
+        {
+            m_newRecordAnimator.SetTrigger("ShowText");
+            yield return new WaitForSeconds(m_newRecordDisplayTime);
+            m_newRecordAnimator.SetTrigger("HideText");
+        }
+
         void RacerHitCorrectCheckpoint (IRacer racer, Checkpoint checkpoint)
         {
             if (checkpoint.isStartFinishLine)
@@ -190,11 +201,22 @@ namespace KartGame.Track
                 {
                     float lapTime = racer.GetLapTime ();
 
+                    float currentBestTime = PlayerPrefs.GetFloat("BestTime", 99);
+                    if (currentBestTime > lapTime)
+                    {
+                        StartCoroutine(ShowNewRecord());
+                        PlayerPrefs.SetFloat("BestTime", lapTime);
+                    }
+
                     if (m_SessionBestLap.time > lapTime)
-                        m_SessionBestLap.SetRecord (trackName, 1, racer, lapTime);
+                    {
+                        m_SessionBestLap.SetRecord(trackName, 1, racer, lapTime);
+                    }
 
                     if (m_HistoricalBestLap.time > lapTime)
-                        m_HistoricalBestLap.SetRecord (trackName, 1, racer, lapTime);
+                    {
+                        m_HistoricalBestLap.SetRecord(trackName, 1, racer, lapTime);
+                    }
 
                     if (racerCurrentLap == raceLapTotal)
                     {
@@ -208,6 +230,7 @@ namespace KartGame.Track
 
                         racer.DisableControl ();
                         racer.PauseTimer ();
+                        m_gameOverUI.SetActive(true);
                     }
                 }
 
