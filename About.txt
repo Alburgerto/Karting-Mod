@@ -1,0 +1,11 @@
+Al juego base se ha añadido una escena con el menú de inicio que muestra el mejor tiempo de vuelta así como el número total de monedas recogidas entre todas tus partidas, ambos valores guardados y recogidos en/de PlayerPrefs.
+El dato de mejor tiempo de vuelta es insertado en PlayerPrefs en el método RacerHitCorrectCheckpoint de TrackManager, función llamada al llegar a un checkpoint del juego. 
+Identifiqué una variable en TrackManager (m_HistoricalBestLap) que podría haberse usado para este propósito pero ante la descripción del ejercicio y de la sugerencia de Emma me decidí por usar una variable de PlayerPrefs independiente de m_HistoricalBestLap, de esa forma también evitando modificar gran parte del código base, que creo que está fuera del propósito de esta prueba.
+El menú tiene, además, unos textos unos botones con sus respectivos OnClick() que ejecutan código de un nuevo script (Scripts/Mod/MainMenu.cs) para cargar la escena de juego o cerrar la aplicación.
+Los elementos de la UI del menú tienen los pivotes relativos a sus lados para que se muestren igual en distintos dispositivos ("interfaz responsive").
+
+En la escena de juego añadí monedas (esferas con escala modificada y con un simple material con albedo amarillo) con una simple animación de rotación.
+Las monedas tienen el script Coin.cs que gestiona colisiones con el jugador. Al haber una colisión (las monedas tienen un SphereCollider en modo trigger) la moneda cambia de posición a un sitio que no se puede ver en el juego y da comienzo una corrutina que hace que la moneda vuelva a aparecer tras un tiempo.
+También suena un sonido a través de un AudioSource y se llama a un método de CoinManager encargado de sumar el número de monedas recogidas en la carrera, así como de escribirlo en el texto de la interfaz y de sumar también la variable de PlayerPrefs.
+
+En TrackManager también inserté el código para mostrar un panel de UI con el texto de "New record" (que también tiene una animación muy básica, y uso los pivotes para que quede siempre fuera de la pantalla por defecto).

@@ -9,6 +9,7 @@ namespace KartGame.Track
     /// <summary>
     /// A MonoBehaviour to deal with all the time and positions for the racers.
     /// </summary>
+    [RequireComponent(typeof(AudioSource))]
     public class TrackManager : MonoBehaviour
     {
         [Tooltip ("The name of the track in this scene.  Used for track time records.  Must be unique.")]
@@ -32,6 +33,8 @@ namespace KartGame.Track
         public GameObject m_gameOverUI;
         public Animator m_newRecordAnimator;
         public float m_newRecordDisplayTime;
+        public AudioClip m_newRecordClip;
+        private AudioSource m_audioSource;
 
         /// <summary>
         /// Returns the best lap time recorded this session.  If no record is found, -1 is returned.
@@ -114,7 +117,8 @@ namespace KartGame.Track
         {
             if(checkpoints.Count == 0)
                 return;
-            
+
+            m_audioSource = GetComponent<AudioSource>();
             Object[] allRacerArray = FindObjectsOfType<Object> ().Where (x => x is IRacer).ToArray ();
 
             for (int i = 0; i < allRacerArray.Length; i++)
@@ -204,6 +208,7 @@ namespace KartGame.Track
                     float currentBestTime = PlayerPrefs.GetFloat("BestTime", 99);
                     if (currentBestTime > lapTime)
                     {
+                        m_audioSource.PlayOneShot(m_newRecordClip);
                         StartCoroutine(ShowNewRecord());
                         PlayerPrefs.SetFloat("BestTime", lapTime);
                     }

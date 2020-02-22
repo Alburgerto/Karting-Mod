@@ -4,24 +4,29 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-public class MainMenu : MonoBehaviour
+namespace KartSystems.Mod
 {
-    public TextMeshProUGUI m_time;
-    public TextMeshProUGUI m_coins;
-
-    public void PlayGame()
+    public class MainMenu : MonoBehaviour
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        public TextMeshProUGUI m_time;
+        public TextMeshProUGUI m_coins;
+
+        public void PlayGame()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+
+        public void ExitGame()
+        {
+            Application.Quit();
+        }
+
+        // Best time and coins collected so far count fetched from PlayerPrefs and displayed
+        private void OnEnable()
+        {
+            m_time.text = PlayerPrefs.HasKey("BestTime") ? PlayerPrefs.GetFloat("BestTime").ToString() : "-";
+            m_coins.text = PlayerPrefs.GetInt("Coins", 0).ToString();
+        }
     }
 
-    public void ExitGame()
-    {
-        Application.Quit();
-    }
-
-    private void OnEnable()
-    {
-        m_time.text  = PlayerPrefs.GetFloat("BestTime", 99).ToString();
-        m_coins.text = PlayerPrefs.GetInt("Coins", 0).ToString();
-    }
 }

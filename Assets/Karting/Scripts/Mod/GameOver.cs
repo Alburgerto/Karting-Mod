@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameOver : MonoBehaviour
+namespace KartSystems.Mod
 {
-    public void PlayAgain()
+    public class GameOver : MonoBehaviour
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
+        public void PlayAgain()
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
 
-    public void BackToMenu()
-    {
-        SceneManager.LoadScene("MainMenu");
+        public void BackToMenu()
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
     }
 }
+
