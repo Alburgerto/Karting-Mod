@@ -47,6 +47,7 @@ namespace KartGame.KartSystems
             
             if (Input.touchCount > 0)
             {
+                Debug.Log(Input.GetTouch(0).position);
                 Touch touch = Input.GetTouch(0);
                 float distance = Mathf.Abs(m_halfScreenWidth - touch.position.x);
                 if (touch.position.x < m_halfScreenWidth)
@@ -58,11 +59,8 @@ namespace KartGame.KartSystems
                     m_Steering = 1 * distance / m_halfScreenWidth;
                 }
             }
-            if (Input.touchCount > 1)
-            {
-                m_HopHeld = true;
-                
-            }
+
+            m_HopHeld = Input.touchCount > 1;
 
             if (m_FixedUpdateHappened)
             {
@@ -73,7 +71,10 @@ namespace KartGame.KartSystems
                 m_FirePressed = false;
             }
 
-            m_HopPressed |= Input.GetKeyDown(KeyCode.Space);
+            if (Input.touchCount > 1)
+            {
+                m_HopPressed |= Input.GetTouch(1).phase == TouchPhase.Began;
+            }
             m_BoostPressed |= Input.GetKeyDown(KeyCode.RightShift);
             m_FirePressed |= Input.GetKeyDown(KeyCode.RightControl);
         }
