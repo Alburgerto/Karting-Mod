@@ -6,7 +6,7 @@ namespace KartGame.KartSystems
 {
     public class PhoneInput : MonoBehaviour, IInput
     {
-        float m_Acceleration;
+        public float m_Acceleration = 0.75f;
         float m_Steering;
         bool m_HopPressed;
         bool m_HopHeld;
@@ -34,6 +34,7 @@ namespace KartGame.KartSystems
 
         bool m_FixedUpdateHappened;
         private float m_halfScreenWidth;
+        private int m_firstTouchId;
 
         private void Start()
         {
@@ -43,20 +44,32 @@ namespace KartGame.KartSystems
         void Update()
         {
             m_Steering = 0;
-            m_Acceleration = 1f;
-            
-            if (Input.touchCount > 0)
+
+            Touch touch;
+            for (int i = 0; i < Input.touchCount; ++i)
             {
-                Debug.Log(Input.GetTouch(0).position);
-                Touch touch = Input.GetTouch(0);
-                float distance = Mathf.Abs(m_halfScreenWidth - touch.position.x);
-                if (touch.position.x < m_halfScreenWidth)
+                touch = Input.GetTouch(i);
+                if (Input.touchCount == 1 && m_firstTouchId != touch.fingerId)
                 {
-                    m_Steering = -1 * distance / m_halfScreenWidth;
+                    m_firstTouchId = touch.fingerId;
                 }
-                else
+
+                if (touch.fingerId == m_firstTouchId && (touch.phase == TouchPhase.Canceled || touch.phase == TouchPhase.Ended))
                 {
-                    m_Steering = 1 * distance / m_halfScreenWidth;
+                    m_firstTouchId = -1;
+                }
+
+                if (touch.fingerId == m_firstTouchId)
+                {
+                    float distance = Mathf.Abs(m_halfScreenWidth - touch.position.x);
+                    if (touch.position.x < m_halfScreenWidth)
+                    {
+                        m_Steering = -1 * distance / m_halfScreenWidth;
+                    }
+                    else
+                    {
+                        m_Steering = 1 * distance / m_halfScreenWidth;
+                    }
                 }
             }
 
@@ -73,10 +86,15 @@ namespace KartGame.KartSystems
 
             if (Input.touchCount > 1)
             {
-                m_HopPressed |= Input.GetTouch(1).phase == TouchPhase.Began;
+                for (int i = 0; i < Input.touchCount; ++i)
+                {
+                    touch = Input.GetTouch(i);
+                    m_HopPressed |= touch.fingerId != m_firstTouchId && touch.phase == TouchPhase.Began;
+                }
             }
+            
             m_BoostPressed |= Input.GetKeyDown(KeyCode.RightShift);
-            m_FirePressed |= Input.GetKeyDown(KeyCode.RightControl);
+            m_FirePressed  |= Input.GetKeyDown(KeyCode.RightControl);
         }
 
         void FixedUpdate()

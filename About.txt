@@ -4,9 +4,9 @@ Identifiqué una variable en TrackManager (m_HistoricalBestLap) que podría habe
 El menú tiene, además, unos textos unos botones con sus respectivos OnClick() que ejecutan código de un nuevo script (Scripts/Mod/MainMenu.cs) para cargar la escena de juego o cerrar la aplicación.
 Los elementos de la UI del menú tienen los pivotes relativos a sus lados para que se muestren igual en distintos dispositivos ("interfaz responsive").
 
-En la escena de juego añadí monedas (esferas con escala modificada y con un simple material con albedo amarillo) con una simple animación de rotación.
+En la escena de juego añadí monedas (esferas con escala modificada y con un simple material con albedo amarillo y con propiedades metálicas) con una simple animación de rotación.
 Las monedas tienen el script Coin.cs que gestiona colisiones con el jugador. Al haber una colisión (las monedas tienen un SphereCollider en modo trigger) la moneda cambia de posición a un sitio que no se puede ver en el juego y da comienzo una corrutina que hace que la moneda vuelva a aparecer tras un tiempo.
-También suena un sonido a través de un AudioSource y se llama a un método de CoinManager encargado de sumar el número de monedas recogidas en la carrera, así como de escribirlo en el texto de la interfaz y de sumar también la variable de PlayerPrefs.
+También suena un sonido a través de un AudioSource y se llama a un método de CoinManager.cs encargado de sumar el número de monedas recogidas en la carrera, así como de escribirlo en el texto de la interfaz y de sumar también la variable de PlayerPrefs.
 
 En TrackManager también inserté el código para mostrar un panel de UI con el texto de "New record" (que también tiene una animación muy básica, y uso los pivotes para que quede siempre fuera de la pantalla por defecto).
 
@@ -15,3 +15,4 @@ Por defecto el objeto Input de KartMovement es KeyboardInput pero si se detecta 
 Para el control del kart para móvil me he inspirado en los controles de Mario Kart Tour, donde siempre existe aceleración hacia delante (no se puede dar marcha atrás), y a la hora de llevar el kart a un lado (steering) tengo en cuenta si se ha tocado la pantalla en el lado izquierdo o el derecho (comparando posición x de donde es ha tocado con la mitad del tamaño horizontal de la pantalla en píxeles).
 Se tiene en cuenta la distancia del toque del dedo en la pantalla con respecto a la línea que divide verticalmente al móvil y, a mayor distancia, mayor velocidad en esa dirección.
 Para derrapar hay que pulsar con un segundo dedo en cualquier punto de la pantalla. El control es mejorable pero el resultado es mejor del que creía: se usa el primer dedo para elegir dirección, el segundo dedo se pulsa para empezar y sostener el derrape; si se varía la velocidad (distancia respecto al centro de la pantalla del primer dedo) mientras se derrapa, se tiene un control bastante decente sobre el derrape.
+Un problema que surgió fue que, al parecer, Input.GetTouch(0) no es siempre el primer dedo pulsado, y por ello es necesario llevar un registro del id del primer dedo que será el que dirigirá al kart, mientras que las consiguientes pulsaciones serán siempre para derrapar.
